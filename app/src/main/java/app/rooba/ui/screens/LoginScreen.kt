@@ -1,7 +1,5 @@
 package app.rooba.ui.screens
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -36,7 +34,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -49,12 +46,11 @@ import app.rooba.data.FxaAuthRepository
 import app.rooba.ui.components.pressScale
 import kotlinx.coroutines.launch
 
-private const val SIGNUP_URL = "https://accounts.firefox.com/signup"
-
 @Composable
 fun LoginScreen(
     authRepository: FxaAuthRepository,
     onSignedIn: () -> Unit,
+    onCreateAccount: () -> Unit,
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -64,7 +60,6 @@ fun LoginScreen(
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
     val buttonInteraction = remember { MutableInteractionSource() }
     val fieldShape = RoundedCornerShape(14.dp)
 
@@ -155,7 +150,7 @@ fun LoginScreen(
             }
             Spacer(Modifier.height(8.dp))
             TextButton(
-                onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(SIGNUP_URL))) },
+                onClick = onCreateAccount,
             ) {
                 Text("No account? Create one for free")
             }

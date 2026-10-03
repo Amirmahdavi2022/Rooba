@@ -18,6 +18,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.Logout
@@ -51,6 +52,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import app.rooba.ui.components.TELEGRAM_CHANNEL
+import app.rooba.ui.components.openTelegramChannel
 import app.rooba.BuildConfig
 import app.rooba.data.SettingsStore
 
@@ -372,6 +375,12 @@ fun SettingsScreen(
             ListItem(
                 headlineContent = { Text("Version") },
                 supportingContent = { Text(BuildConfig.VERSION_NAME) },
+            )
+            ListItem(
+                headlineContent = { Text("Telegram channel") },
+                supportingContent = { Text("@" + TELEGRAM_CHANNEL) },
+                leadingContent = { Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null) },
+                modifier = Modifier.clickable { openTelegramChannel(context) },
             )
             ListItem(
                 headlineContent = { Text("Source code") },

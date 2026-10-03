@@ -12,12 +12,14 @@ import app.rooba.ui.screens.LoginScreen
 import app.rooba.ui.screens.LogsScreen
 import app.rooba.ui.screens.ServerListScreen
 import app.rooba.ui.screens.SettingsScreen
+import app.rooba.ui.screens.SignupScreen
 import app.rooba.ui.screens.SplashScreen
 import app.rooba.ui.theme.ThemeController
 
 object RoobaRoutes {
     const val SPLASH = "splash"
     const val LOGIN = "login"
+    const val SIGNUP = "signup"
     const val HOME = "home"
     const val SERVERS = "servers"
     const val SETTINGS = "settings"
@@ -51,6 +53,13 @@ fun RoobaNavGraph(
                 onSignedIn = {
                     navController.navigate(RoobaRoutes.HOME) { popUpTo(RoobaRoutes.LOGIN) { inclusive = true } }
                 },
+                onCreateAccount = { navController.navigate(RoobaRoutes.SIGNUP) },
+            )
+        }
+        composable(RoobaRoutes.SIGNUP) {
+            SignupScreen(
+                onDone = { navController.popBackStack() },
+                onBack = { navController.popBackStack() },
             )
         }
         composable(RoobaRoutes.HOME) {

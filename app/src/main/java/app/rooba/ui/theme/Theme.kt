@@ -1,5 +1,6 @@
 package app.rooba.ui.theme
 
+import androidx.compose.ui.unit.dp
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -94,10 +95,18 @@ private val DarkColors = darkColorScheme(
     scrim = md_theme_dark_scrim,
 )
 
+val RoobaShapes = androidx.compose.material3.Shapes(
+    extraSmall = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+    small = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+    medium = androidx.compose.foundation.shape.RoundedCornerShape(18.dp),
+    large = androidx.compose.foundation.shape.RoundedCornerShape(24.dp),
+    extraLarge = androidx.compose.foundation.shape.RoundedCornerShape(32.dp),
+)
+
 @Composable
 fun RoobaTheme(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val systemInDarkTheme = isSystemInDarkTheme()
@@ -132,6 +141,7 @@ fun RoobaTheme(
         MaterialExpressiveTheme(
             colorScheme = colorScheme,
             typography = RoobaTypography,
+            shapes = RoobaShapes,
             motionScheme = MotionScheme.expressive(),
             content = content,
         )

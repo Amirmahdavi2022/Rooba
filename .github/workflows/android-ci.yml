@@ -34,24 +34,19 @@ jobs:
         with:
           gradle-version: "8.10.2"
 
-      - name: Decode signing keystore
+      - name: Build release APK
         env:
-          SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
-          if [ -n "$SIGNING_KEYSTORE_BASE64" ]; then
-            printf '%s' "$SIGNING_KEYSTORE_BASE64" | base64 -d > release-keystore.jks
-            echo "keystore ready"
+          if [ -n "$SIGNING_PASSWORD" ]; then
+            cp signing/rooba.jks release-keystore.jks
+            export SIGNING_KEY_ALIAS=rooba
+            export SIGNING_KEY_PASSWORD="$SIGNING_PASSWORD"
+            export SIGNING_STORE_PASSWORD="$SIGNING_PASSWORD"
           else
-            echo "::error::SIGNING_KEYSTORE_BASE64 secret is missing"
-            exit 1
+            echo "::warning::SIGNING_PASSWORD secret is missing, building an unsigned APK"
           fi
-
-      - name: Build release APKs
-        env:
-          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
-        run: gradle :app:assembleRelease --no-daemon
+          gradle :app:assembleRelease --no-daemon
 
       - name: Remove keystore
         if: always()
@@ -61,7 +56,13 @@ jobs:
         run: |
           VERSION=$(grep -oP 'versionName = "\K[^"]+' app/build.gradle.kts)
           mkdir -p out
-          cp app/build/outputs/apk/release/app-release.apk "out/Rooba-${VERSION}.apk"
+          APK=$(ls app/build/outputs/apk/release/app-release.apk 2>/dev/null || true)
+          if [ -z "$APK" ]; then
+            echo "::error::no signed APK (is SIGNING_PASSWORD set?)"
+            ls app/build/outputs/apk/release/
+            exit 1
+          fi
+          cp "$APK" "out/Rooba-${VERSION}.apk"
           ls -la out
 
       - name: Upload APKs
